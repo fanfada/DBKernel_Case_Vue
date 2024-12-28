@@ -83,7 +83,22 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/suite',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: '/suite/testcase/index',
+        component: () => import('@/views/suite/testcase/index'),
+        name: 'Profile',
+        meta: { title: '用例信息', icon: 'testcase' }
+      }
+    ]
   }
+
 ]
 
 // 动态路由，基于用户权限动态去加载
