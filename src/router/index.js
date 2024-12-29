@@ -71,20 +71,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/user',
-    component: Layout,
-    hidden: true,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
-      }
-    ]
-  },
-  {
     path: '/suite',
     component: Layout,
     hidden: true,
@@ -95,6 +81,20 @@ export const constantRoutes = [
         component: () => import('@/views/suite/testcase/index'),
         name: 'Profile',
         meta: { title: '用例信息', icon: 'testcase' }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'profile',
+        component: () => import('@/views/system/user/profile/index'),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'user' }
       }
     ]
   }

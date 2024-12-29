@@ -17,8 +17,8 @@
         <pane size="84">
           <el-col>
             <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-              <el-form-item label="用户名称" prop="userName">
-                <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+              <el-form-item label="用例名称" prop="userName">
+                <el-input v-model="queryParams.userName" placeholder="请输入用例名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
               </el-form-item>
               <el-form-item label="创建时间" style="width: 308px">
                 <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -48,15 +48,13 @@
               <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
             </el-row>
 
-            <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+            <el-table v-loading="loading" :data="caseList" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" align="center" />
-              <el-table-column label="用例编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-              <el-table-column label="用例名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-              <el-table-column label="功能组" align="center" key="funcName" prop="func.funcName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-              <!--              <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
-              <el-table-column label="用例备注" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-
-              <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+              <el-table-column label="用例编号" align="center" key="caseId" prop="caseId" v-if="columns[0].visible"  width="100"/>
+              <el-table-column label="用例名称" align="center" key="caseName" prop="caseName" v-if="columns[1].visible" :show-overflow-tooltip="true" width="500"/>
+<!--              <el-table-column label="功能组" align="center" key="funcId" prop="funcId" v-if="columns[4].visible" :show-overflow-tooltip="true" />-->
+              <el-table-column label="用例备注" align="center" key="remark" prop="remark" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[3].visible" width="160">
                 <template #default="scope">
                   <span>{{ parseTime(scope.row.createTime) }}</span>
                 </template>
@@ -107,8 +105,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
+            <el-form-item v-if="form.userId == undefined" label="用例名称" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用例名称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -202,7 +200,7 @@ const appStore = useAppStore()
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
 
-const userList = ref([]);
+const caseList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -235,13 +233,11 @@ const upload = reactive({
 });
 // 列显隐信息
 const columns = ref([
-  { key: 0, label: `用户编号`, visible: true },
-  { key: 1, label: `用户名称`, visible: true },
-  { key: 2, label: `用户昵称`, visible: true },
-  { key: 3, label: `部门`, visible: true },
-  { key: 4, label: `手机号码`, visible: true },
-  { key: 5, label: `状态`, visible: true },
-  { key: 6, label: `创建时间`, visible: true }
+  { key: 0, label: `用例编号`, visible: true },
+  { key: 1, label: `用例名称`, visible: true },
+  { key: 2, label: `用例备注`, visible: true },
+  { key: 3, label: `创建时间`, visible: true },
+  { key: 4, label: `功能组`, visible: true }
 ]);
 
 const data = reactive({
@@ -249,13 +245,10 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    userName: undefined,
-    phonenumber: undefined,
-    status: undefined,
-    deptId: undefined
+    funcId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
+    userName: [{ required: true, message: "用例名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用例名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }, { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
@@ -276,15 +269,15 @@ watch(funcName, val => {
   proxy.$refs["funcTreeRef"].filter(val);
 });
 
-/** 查询用户列表 */
-// function getList() {
-//   loading.value = true;
-//   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-//     loading.value = false;
-//     userList.value = res.rows;
-//     total.value = res.total;
-//   });
-// };
+/** 查询用例列表 */
+function getList() {
+  loading.value = true;
+  listCase(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+    loading.value = false;
+    caseList.value = res.rows;
+    total.value = res.total;
+  });
+};
 
 /** 查询测试用例下拉树结构 */
 function getFuncTree() {
@@ -309,7 +302,7 @@ function filterDisabledFunc(funcList) {
 
 /** 节点单击事件 */
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
+  queryParams.value.funcId = data.id;
   handleQuery();
 };
 
@@ -323,7 +316,7 @@ function handleQuery() {
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
-  queryParams.value.deptId = undefined;
+  queryParams.value.funcId = undefined;
   proxy.$refs.funcTreeRef.setCurrentKey(null);
   handleQuery();
 };
@@ -511,5 +504,5 @@ function submitForm() {
 };
 
 getFuncTree();
-// getList();
+getList();
 </script>

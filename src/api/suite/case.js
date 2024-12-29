@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
-// 查询用户列表
+// 查询用例列表
 export function listCase(query) {
     return request({
-        url: '/suite/testcase/list',
+        url: '/suite/casepack/list',
         method: 'get',
         params: query
     })
