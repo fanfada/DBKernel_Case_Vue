@@ -3,8 +3,8 @@
 
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>后台管理框架</h2>
-        <p>后台管理系统</p>
+        <h2>内核用例编排系统</h2>
+        <p>内核用例编排系统</p>
         <p>
           <b>当前版本:</b> <span>v{{ version }}</span>
         </p>
